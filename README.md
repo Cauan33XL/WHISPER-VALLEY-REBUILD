@@ -47,6 +47,8 @@ A história acompanha um mistério denso. Após o fracasso de sua última public
 Para entender este Remake, é fundamental conhecer a dinâmica do jogo original. Eu e o Caio tomamos juntos grande parte das decisões criativas:
 - **Eu (Cauan)**: Fui o responsável pela criação de todos os Assets de arte e design. Além disso, programei a lógica que permitiu que o *spritesheet* do *player* funcionasse no código original.
 - **Caio**: Foi o responsável por desenvolver 90% do código e estruturação do jogo original.
+
+🎮 **[Jogue a versão original clássica aqui!](https://caio-oliveiraa.github.io/whiper-valley/)**
 🔗 [Acesse aqui o repositório original pertencente ao Caio](https://github.com/Caio-oliveiraa/whiper-valley).
 
 ## 🏆 Créditos da Obra Original
