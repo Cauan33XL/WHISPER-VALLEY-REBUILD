@@ -4,7 +4,7 @@
   <img src="assets/logo.png" alt="Whisper Valley Logo">
 </div>
 
-**Whisper Valley Remake** é a recriação do universo original que inspirou meu outro jogo que é um universo alternativo (AU) de Whisper Valley, chamado: [*Sycamore Valley*](https://sycamore-valley-game.vercel.app/).
+**Whisper Valley Remake** é a recriação do universo original que inspirou meu outro jogo que é um universo alternativo (AU) de Whisper Valley, chamado: [**SYCAMORE VALLEY**](https://sycamore-valley-game.vercel.app/).
 
 ## 🏫 A Origem: Whisper Valley
 
