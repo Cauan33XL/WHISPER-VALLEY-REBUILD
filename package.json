@@ -1,0 +1,23 @@
+{
+  "name": "whisper-valley-remake",
+  "version": "1.0.0",
+  "description": "Whisper Valley Remake by 33XL GAMES SYSTEM",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["whisper-valley", "remake", "rpg", "phaser"],
+  "author": "33XL GAMES SYSTEM",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "phaser": "^4.2.0"
+  },
+  "devDependencies": {
+    "tslib": "^2.8.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0"
+  }
+}
