@@ -6,11 +6,13 @@
 
 **Whisper Valley Remake** é a recriação do universo original que inspirou meu outro jogo que é um universo alternativo (AU) de Whisper Valley, chamado: [*Sycamore Valley*](https://sycamore-valley-game.vercel.app/).
 
-## 🌲 [Sycamore Valley](https://sycamore-valley-game.vercel.app/).
+# 🌲 SYCAMORE VALLEY - AU GAME
 
 <div align="center">
   <img src="public/sycamore.png" alt="Sycamore Valley Logo">
 </div>
+
+## [Acese o jogo aqui: ](https://sycamore-valley-game.vercel.app/).
 
 Embora *Sycamore Valley* tenha nascido como um Universo Alternativo (AU) construído sobre a fundação de Whisper Valley, ele evoluiu drasticamente e conquistou uma identidade própria, independente e madura. O projeto se transformou em um intenso jogo de *pixel-art horror metafísico* com uma *lore* profundamente psicológica e autoral. 
 
