@@ -1,10 +1,10 @@
-# Whisper Valley Remake
+# WHISPER VALLEY - REMAKE BY 33XL GAMES SYSTEM
 
 <div align="center">
   <img src="assets/logo.png" alt="Whisper Valley Logo">
 </div>
 
-**Whisper Valley Remake** é a recriação do universo original que inspirou meu outro projeto, [*Sycamore Valley*](https://sycamore-valley-game.vercel.app/).
+**Whisper Valley Remake** é a recriação do universo original que inspirou meu outro jogo que é um universo alternativo (AU) de Whisper Valley, chamado: [*Sycamore Valley*](https://sycamore-valley-game.vercel.app/).
 
 O projeto original de Whisper Valley foi um marco criativo muito importante para mim. Como uma iniciativa de preservação e revitalização, este remake foi criado para manter a obra original viva e acessível. A ideia é refazer o jogo do zero, mantendo a proposta original e utilizando tecnologias web modernas (**TypeScript, Vite e motor Phaser 3**), o que garante estabilidade e fluidez sem perder a essência.
 
