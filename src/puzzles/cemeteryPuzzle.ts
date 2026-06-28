@@ -69,6 +69,8 @@ export const CemeteryPuzzle = (function () {
         background: "#222",
         color: "#fff"
       });
+      input.addEventListener('keydown', e => e.stopPropagation());
+      input.addEventListener('keyup', e => e.stopPropagation());
       inputsWrap.appendChild(input);
       inputs.push(input);
     }
@@ -163,7 +165,6 @@ export const CemeteryPuzzle = (function () {
   }
 
   function showModal() {
-    puzzleAtivo = true; // impede o jogador de se mover
     if (STATE.completed) return;
     createModal();
     const modal = document.getElementById("cemetery-puzzle-modal");
@@ -179,7 +180,6 @@ export const CemeteryPuzzle = (function () {
   }
 
   function hideModal() {
-    puzzleAtivo = false;
     const modal = document.getElementById("cemetery-puzzle-modal");
     if (modal) modal.style.visibility = "hidden";
     STATE.showModal = false;
@@ -190,8 +190,8 @@ export const CemeteryPuzzle = (function () {
     // player.x / y are world coords; puzzle rect is world coords
     const rect = STATE.rect;
     // area check: basic AABB with small margin OR center distance
-    const px = player.x + (player.largura || 0) / 2;
-    const py = player.y + (player.altura || 0) / 2;
+    const px = player.x + (player.largura || player.displayWidth || 0) / 2;
+    const py = player.y + (player.altura || player.displayHeight || 0) / 2;
     const insideX = px >= rect.x && px <= rect.x + rect.w;
     const insideY = py >= rect.y && py <= rect.y + rect.h;
     if (insideX && insideY) return true;
@@ -264,26 +264,7 @@ export const CemeteryPuzzle = (function () {
     return false;
   }
 
-  // ja-inicializa listener para tecla Space — não interfere com seu sistema existente.
-  // Ele só abre modal se estiver na área.
-  window.addEventListener("keydown", function (e) {
-    if (e.code === "Space") {
-      // tentar abrir modal se próximo e não houve foco em input (para evitar capturar ENTER)
-      // Se já estiver aberto, não faz nada
-      try {
-        if (!STATE.active || STATE.completed) return;
-        // tenta obter global player/map (se existirem)
-        const player = window.player || window.playerInstance || window._player;
-        const map = window.mapa || window.map || window._map;
-        if (player && map) {
-          if (playerInArea(player, map)) {
-            e.preventDefault();
-            showModal();
-          }
-        }
-      } catch (err) { /* ignore */ }
-    }
-  });
+  // O controle de input da tecla Espaço agora é feito pelo PuzzleManager no Phaser
 
   // API pública
   return {

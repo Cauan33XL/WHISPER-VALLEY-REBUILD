@@ -11,17 +11,24 @@ export default class NPC extends Phaser.GameObjects.Image {
   private dialogText: Phaser.GameObjects.Text;
   private continueText: Phaser.GameObjects.Text;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, falas: string[], displayWidth = 64, displayHeight = 96) {
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, falas: string[], _displayWidth = 64, _displayHeight = 96) {
     super(scene, x, y, texture);
     this.falas = falas;
     
-    // Configurações do Sprite (no código original a largura e altura eram customizadas)
-    this.setDisplaySize(displayWidth, displayHeight);
-    this.setOrigin(0.5, 0.5);
+    // Configurações do Sprite
+    // Original usava coordenadas no topo-esquerdo (0, 0)
+    this.setOrigin(0, 0);
+    
+    // Calcula a escala mantendo a proporção original para não ficar "fino",
+    // usando uma altura próxima à do Player (aprox 160 pixels de altura).
+    const targetHeight = 160;
+    const scale = targetHeight / this.height;
+    this.setScale(scale);
+
     scene.add.existing(this);
 
     // Texto flutuante de dica
-    this.promptText = scene.add.text(x, y - displayHeight / 2 - 20, 'ESPAÇO para interagir', {
+    this.promptText = scene.add.text(x + (this.width * scale) / 2, y - 20, 'ESPAÇO para interagir', {
       font: '16px monospace',
       color: '#ffffff',
       backgroundColor: '#00000088'
@@ -52,7 +59,9 @@ export default class NPC extends Phaser.GameObjects.Image {
   }
 
   update(player: Player, spaceKey: Phaser.Input.Keyboard.Key) {
-    const dist = Phaser.Math.Distance.Between(this.x, this.y, player.x, player.y);
+    const centerX = this.x + (this.width * this.scaleY) / 2;
+    const centerY = this.y + (this.height * this.scaleY) / 2;
+    const dist = Phaser.Math.Distance.Between(centerX, centerY, player.x, player.y);
     
     if (dist < 200) {
       if (!this.interagindo) {

@@ -4,6 +4,17 @@ import NPC from '../entities/NPC';
 import { Item, Inventory } from '../entities/Item';
 import PuzzleManager from '../puzzles/PuzzleManager';
 import { colisoes, TAM_BLOCO } from '../data/colisoes';
+import { CutsceneConfig } from './CutsceneScene';
+
+interface EventZone {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  triggered: boolean;
+  sequence: CutsceneConfig[];
+}
 
 export default class GameScene extends Phaser.Scene {
   private player!: Player;
@@ -14,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
   private items: Item[] = [];
   private inventory!: Inventory;
   private puzzleManager!: PuzzleManager;
+  private eventZones: EventZone[] = [];
 
   constructor() {
     super('GameScene');
@@ -51,18 +63,18 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.setZoom(1.0);
 
     // Inicializar NPCs (dados do index.html legado)
-    this.npcs.push(new NPC(this, 5680, 2750, 'npc-1', [
+    this.npcs.push(new NPC(this, 5744, 2750, 'npc-1', [
       "Sebastião: Whisper Valley guarda segredos que nem o vento ousa contar...",
       "Sebastião: À noite, as vozes chamam do lago.",
       "Sebastião: Você escuta se ficar em silêncio por tempo demais.",
       "Sebastião: Foi assim que Daniel se perdeu... o lago o levou."
     ]));
-    this.npcs.push(new NPC(this, 3320, 2500, 'npc-2', [
+    this.npcs.push(new NPC(this, 3384, 2500, 'npc-2', [
       "João: Os moradores... eles não são mais os mesmos.",
       "João: Olhos que não piscam... sorrisos que não alcançam o rosto.",
       "João: Dizem que Sofia tentou ir embora... mas acabou morrendo entre as árvores."
     ]));
-    this.npcs.push(new NPC(this, 6000, 1270, 'npc-3', [
+    this.npcs.push(new NPC(this, 6064, 1270, 'npc-3', [
       "Ana: Abraxas... esse nome ainda ecoa aqui.",
       "Ana: Alguns o chamam de deus. Outros, de punição.",
       "Ana: Jonas... ele acreditou demais. E agora está em silêncio eterno como o resto.",
@@ -70,14 +82,14 @@ export default class GameScene extends Phaser.Scene {
       "Ethan: Todos falam desse nome como se fosse uma sombra viva.",
       "Ethan: Parece que cheguei mais perto do que devia."
     ]));
-    this.npcs.push(new NPC(this, 2490, 1010, 'npc-4', [
+    this.npcs.push(new NPC(this, 2554, 1010, 'npc-4', [
       "Weverson: Você é novo por aqui, não é?!",
       "Weverson: Então escute bem... há algo que domina essa cidade.",
       "Weverson: Uma seita... chamam de Abraxas.",
       "Weverson: Eles observam tudo. E não gostam de forasteiros curiosos.",
       "Weverson: Tome cuidado... nem todos que sorriem aqui são humanos por completo.",
     ]));
-    this.npcs.push(new NPC(this, 3000, 4990, 'npc-5', [
+    this.npcs.push(new NPC(this, 3064, 4990, 'npc-5', [
       "Helena: A seita pode ser vencida... mas não com força.",
       "Helena: Há um item... antigo. Escondido onde a névoa toca o chão.",
       "Helena: Miguel... ele também o procurava.",
@@ -98,6 +110,70 @@ export default class GameScene extends Phaser.Scene {
 
     // Inicializar Puzzles
     this.puzzleManager = new PuzzleManager(this);
+
+    // Inicializar Zonas de Evento (Cutscenes do mapa)
+    this.eventZones = [
+      {
+        id: 'pousada', x: 6150, y: 2470, w: 200, h: 200, triggered: false,
+        sequence: [
+          { type: 'image', imageKey: 'cena-5', texts: [
+            "Ethan: Estranho... não há ninguém aqui dentro.",
+            "Ethan: É melhor eu me aproximar do balcão."
+          ]},
+          { type: 'image', imageKey: 'cena-6', texts: [
+            "Ethan: Um bilhete...? O que é isso?",
+            "Ethan: 'Bem-vindo à Whisper Valley, Ethan... estávamos te esperando'.",
+            "Ethan: Quem escreveu isso... e como sabia que eu viria?"
+          ]}
+        ]
+      },
+      {
+        id: 'igreja', x: 5450, y: 900, w: 200, h: 200, triggered: false,
+        sequence: [
+          { type: 'image', imageKey: 'cena-7', texts: [
+            "Ethan: Que lugar é esse...? Uma igreja...",
+            "Ethan: Estranho... não parece uma igreja comum.",
+            "Ethan: Esses símbolos... nunca vi nada assim. Tem algo de errado aqui.",
+            "Ethan: Hmm... o que é isso? Há uma frase na frente...",
+            "Ethan: Parece algum tipo de enigma..."
+          ]}
+        ]
+      },
+      {
+        id: 'cemiterio', x: 2900, y: 200, w: 1100, h: 550, triggered: false,
+        sequence: [
+          { type: 'image', imageKey: 'cena-8', texts: [
+            "Ethan: Não gosto do aspecto disto.",
+            "(Observando o cemitério e a torre ao longe.)",
+            "Ethan: Tem sete lápides. Quatro com nomes ilegíveis, e três...",
+            "Ethan: ...estas estão completamente em branco.",
+            "Ethan: Isto não foi um acidente."
+          ]}
+        ]
+      },
+      {
+        id: 'lago', x: 5400, y: 5500, w: 400, h: 200, triggered: false,
+        sequence: [
+          { type: 'image', imageKey: 'cena-9', texts: [
+            "Ethan: A névoa está densa aqui.",
+            "Ethan: Silêncio absoluto... não ouço nada.",
+            "Ethan: O lago... parece um espelho negro, refletindo nada além da escuridão."
+          ]}
+        ]
+      },
+      {
+        id: 'ruinas', x: 10250, y: 3400, w: 600, h: 600, triggered: false,
+        sequence: [
+          { type: 'image', imageKey: 'cena-10', texts: [
+            "Ethan: Mas o que é isso...? Ruínas em meio a este lugar... É de dar calafrios.",
+            "Ethan: Essas estátuas... e os pedestais. Eles não parecem estar aqui por acaso.",
+            "Ethan: Símbolos em cada um... Um de água, outro de folha ou broto, terra... e um tipo de espiral?",
+            "Ethan: Devem ser indicações. Cada pedestal pede por um item específico que corresponda ao seu símbolo.",
+            "Ethan: A chave para o que for que esteja aqui deve ser colocar os itens corretos em cada um deles. É o que eu tenho que fazer."
+          ]}
+        ]
+      }
+    ];
 
     // Música
     const music = this.sound.add('musica', { loop: true, volume: 0.5 });
@@ -143,6 +219,20 @@ export default class GameScene extends Phaser.Scene {
     // Atualizar Itens
     for (const item of this.items) {
       item.update(this.player, this.spaceKey, this.inventory);
+    }
+
+    // Checar Zonas de Evento
+    for (const zone of this.eventZones) {
+      if (!zone.triggered) {
+        const px = this.player.x;
+        const py = this.player.y;
+        if (px >= zone.x && px <= zone.x + zone.w && py >= zone.y && py <= zone.y + zone.h) {
+          zone.triggered = true;
+          this.scene.pause();
+          this.scene.launch('CutsceneScene', { sequence: zone.sequence, isResume: true, nextScene: 'GameScene' });
+          return;
+        }
+      }
     }
 
     // Checar condição de final de jogo

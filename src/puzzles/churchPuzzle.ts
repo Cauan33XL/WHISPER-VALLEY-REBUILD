@@ -92,13 +92,15 @@ export const ChurchPuzzle = (function () {
 
   // verifica se jogador está dentro da área (usamos o centro do player, ou retângulo se você tiver)
     function playerInArea(player, mapa) {
-  if (!player || !mapa) return false;
+  if (!player) return false;
 
   // Considera o tamanho real do player (largura e altura)
+  const w = player.largura || player.displayWidth || 0;
+  const h = player.altura || player.displayHeight || 0;
   const playerLeft = player.x;
-  const playerRight = player.x + player.largura;
+  const playerRight = player.x + w;
   const playerTop = player.y;
-  const playerBottom = player.y + player.altura;
+  const playerBottom = player.y + h;
 
   // Área do puzzle
   const areaLeft = area.x;

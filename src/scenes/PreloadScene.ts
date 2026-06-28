@@ -46,6 +46,18 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('cena-2', 'assets/cena-2.png');
     this.load.image('cena-3', 'assets/cena-3.png');
     this.load.image('cena-4', 'assets/cena-4.png');
+    this.load.image('cena-5', 'assets/cena-5.png');
+    this.load.image('cena-6', 'assets/cena-6.png');
+    this.load.image('cena-7', 'assets/cena-7.png');
+    this.load.image('cena-8', 'assets/cena-8.png');
+    this.load.image('cena-9', 'assets/cena-9.png');
+    this.load.image('cena-10', 'assets/cena-10.png');
+    this.load.image('cena-11', 'assets/cena-11.png');
+    this.load.image('cena-12', 'assets/cena-12.png');
+    this.load.image('cena-13', 'assets/cena-13.png');
+    this.load.image('cena-14', 'assets/cena-14.png');
+    this.load.image('cena-15', 'assets/cena-15.png');
+    this.load.image('cena-16', 'assets/cena-16.png');
     this.load.image('mapa_jogo', 'assets/mapa_jogo.webp');
     this.load.image('npc-1', 'assets/npc-1.png');
     this.load.image('npc-2', 'assets/npc-2.png');

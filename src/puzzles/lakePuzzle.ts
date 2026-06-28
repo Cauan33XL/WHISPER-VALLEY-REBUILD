@@ -393,8 +393,8 @@ function checkCompletion() {
   },
 
   playerInArea(player, map) {
-    const px = player.x + player.largura / 2;
-    const py = player.y + player.altura / 2;
+    const px = player.x + (player.largura || player.displayWidth || 0) / 2;
+    const py = player.y + (player.altura || player.displayHeight || 0) / 2;
     return (px >= state.x && px <= state.x + state.w && py >= state.y && py <= state.y + state.h);
   },
 

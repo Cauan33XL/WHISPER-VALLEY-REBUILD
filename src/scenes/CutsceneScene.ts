@@ -1,13 +1,13 @@
 import Phaser from 'phaser';
 import { dialogos } from '../data/dialogos';
 
-interface CutsceneConfig {
+export interface CutsceneConfig {
   type: 'image' | 'text';
   imageKey?: string;
   texts?: string[];
 }
 
-const cutsceneSequence: CutsceneConfig[] = [
+const introSequence: CutsceneConfig[] = [
   { type: 'image', imageKey: 'logo' },
   { type: 'image', imageKey: 'instrucoes' },
   {
@@ -31,6 +31,9 @@ const cutsceneSequence: CutsceneConfig[] = [
 ];
 
 export default class CutsceneScene extends Phaser.Scene {
+  private cutsceneSequence: CutsceneConfig[] = [];
+  private nextScene: string = 'GameScene';
+  private isResume: boolean = false;
   private currentIndex = 0;
   private currentTextIndex = 0;
 
@@ -47,7 +50,28 @@ export default class CutsceneScene extends Phaser.Scene {
     super('CutsceneScene');
   }
 
+  init(data: any) {
+    if (data && data.sequence) {
+      this.cutsceneSequence = data.sequence;
+    } else {
+      this.cutsceneSequence = introSequence;
+    }
+    
+    if (data && data.nextScene) {
+      this.nextScene = data.nextScene;
+    } else {
+      this.nextScene = 'GameScene';
+    }
+
+    if (data && data.isResume !== undefined) {
+      this.isResume = data.isResume;
+    } else {
+      this.isResume = false;
+    }
+  }
+
   create() {
+    this.scene.bringToTop();
     this.currentIndex = 0;
     this.currentTextIndex = 0;
 
@@ -83,7 +107,7 @@ export default class CutsceneScene extends Phaser.Scene {
         this.dialogText?.setPosition(50, h - 140);
         this.dialogText?.setStyle({ wordWrap: { width: w - 100 } });
       }
-      this.drawBox(cutsceneSequence[this.currentIndex]?.type === 'image');
+      this.drawBox(this.cutsceneSequence[this.currentIndex]?.type === 'image');
     });
 
     this.tweens.add({
@@ -102,7 +126,7 @@ export default class CutsceneScene extends Phaser.Scene {
   }
 
   advance() {
-    const current = cutsceneSequence[this.currentIndex];
+    const current = this.cutsceneSequence[this.currentIndex];
     
     // Se o efeito de digitação ainda não terminou, completa ele imediatamente
     if (this.typeWriterEvent && this.currentTypedText.length < this.currentFullText.length) {
@@ -124,8 +148,13 @@ export default class CutsceneScene extends Phaser.Scene {
     } else {
       this.currentIndex++;
       this.currentTextIndex = 0;
-      if (this.currentIndex >= cutsceneSequence.length) {
-        this.scene.start('GameScene');
+      if (this.currentIndex >= this.cutsceneSequence.length) {
+        if (this.isResume) {
+          this.scene.resume(this.nextScene);
+          this.scene.stop();
+        } else {
+          this.scene.start(this.nextScene);
+        }
       } else {
         this.renderCurrentScene();
       }
@@ -133,7 +162,7 @@ export default class CutsceneScene extends Phaser.Scene {
   }
 
   renderCurrentScene() {
-    const current = cutsceneSequence[this.currentIndex];
+    const current = this.cutsceneSequence[this.currentIndex];
 
     if (current.type === 'image' && current.imageKey) {
       this.bgImage?.setTexture(current.imageKey);
@@ -161,7 +190,7 @@ export default class CutsceneScene extends Phaser.Scene {
   }
 
   showText() {
-    const current = cutsceneSequence[this.currentIndex];
+    const current = this.cutsceneSequence[this.currentIndex];
     this.currentFullText = current.texts![this.currentTextIndex];
     this.currentTypedText = "";
     

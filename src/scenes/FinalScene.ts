@@ -51,16 +51,19 @@ export default class FinalScene extends Phaser.Scene {
     this.currentFalaIndex = 0;
     this.isFinished = false;
 
+    const width = this.scale.width;
+    const height = this.scale.height;
+
     this.bgImage = this.add.image(0, 0, '').setOrigin(0, 0);
 
     this.dialogBox = this.add.graphics();
-    this.dialogText = this.add.text(50, 560, '', {
+    this.dialogText = this.add.text(50, height - 140, '', {
       font: '20px monospace',
       color: '#ffffff',
-      wordWrap: { width: 900 }
+      wordWrap: { width: width - 100 }
     });
 
-    this.promptText = this.add.text(965, 660, 'ESPAÇO para avançar', {
+    this.promptText = this.add.text(width - 35, height - 40, 'ESPAÇO para avançar', {
       font: '18px monospace',
       color: '#ffffff'
     }).setOrigin(1, 1);
@@ -105,23 +108,30 @@ export default class FinalScene extends Phaser.Scene {
   renderCurrentScene() {
     const current = this.currentSequence[this.currentIndex];
 
+    const width = this.scale.width;
+    const height = this.scale.height;
+
     // Carregar background
     this.bgImage?.setTexture(current.imagem);
+    this.bgImage?.setDisplaySize(width, height);
 
     // Dialog Box
     const margem = 30;
     const caixaAltura = 120;
     this.dialogBox?.clear();
     this.dialogBox?.fillStyle(0x000000, 0.7);
-    this.dialogBox?.fillRect(margem, 700 - caixaAltura - margem, 1000 - margem * 2, caixaAltura);
+    this.dialogBox?.fillRect(margem, height - caixaAltura - margem, width - margem * 2, caixaAltura);
     this.dialogBox?.lineStyle(2, 0xffffff);
-    this.dialogBox?.strokeRect(margem, 700 - caixaAltura - margem, 1000 - margem * 2, caixaAltura);
+    this.dialogBox?.strokeRect(margem, height - caixaAltura - margem, width - margem * 2, caixaAltura);
 
     const fala = current.falas[this.currentFalaIndex];
     this.dialogText?.setText(fala);
   }
 
   showFinalScreen() {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    
     this.isFinished = true;
     this.bgImage?.setVisible(false);
     this.dialogBox?.clear();
@@ -131,11 +141,11 @@ export default class FinalScene extends Phaser.Scene {
     if (this.isGoodEnding) {
       const mensagem = "Depois de retornar, Ethan publica sua matéria, mas ninguém acredita em sua história.\nO mundo a trata como uma obra de ficção.\nPor causa do fracasso da publicação, ele é demitido do jornal e\npermanece como o único vivo que conhece a verdade sobre Whisper Valley.";
       
-      this.add.text(500, 250, mensagem, { font: '20px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
-      this.add.text(500, 430, "Fim! Você fez o final bom?!", { font: '28px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+      this.add.text(width / 2, height / 2 - 100, mensagem, { font: '20px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+      this.add.text(width / 2, height / 2 + 80, "Fim! Você fez o final bom?!", { font: '28px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
     } else {
-      this.add.text(500, 330, "Fim!", { font: '28px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
-      this.add.text(500, 370, "Você fez o final ruim!", { font: '20px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+      this.add.text(width / 2, height / 2 - 20, "Fim!", { font: '28px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+      this.add.text(width / 2, height / 2 + 20, "Você fez o final ruim!", { font: '20px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
     }
   }
 }

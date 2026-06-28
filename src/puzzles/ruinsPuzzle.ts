@@ -77,6 +77,8 @@ export const RuinsPuzzle = (function () {
       input.type = "text";
       input.placeholder = "escreva o item";
       Object.assign(input.style, { width: "100%", padding: "8px", fontSize: "14px", borderRadius: "4px", border: "1px solid #333", textAlign: "center", background: "#222", color: "white" });
+      input.addEventListener('keydown', e => e.stopPropagation());
+      input.addEventListener('keyup', e => e.stopPropagation());
 
       col.appendChild(img);
       col.appendChild(input);
@@ -213,8 +215,8 @@ export const RuinsPuzzle = (function () {
     },
 
     playerInArea(player, map) {
-      const px = player.x + player.largura / 2;
-      const py = player.y + player.altura / 2;
+      const px = player.x + (player.largura || player.displayWidth || 0) / 2;
+      const py = player.y + (player.altura || player.displayHeight || 0) / 2;
       return px >= state.x && px <= state.x + state.w && py >= state.y && py <= state.y + state.h;
     },
 
