@@ -401,11 +401,15 @@ function checkCompletion() {
   showModal,
   hideModal,
 
-  // adiciona a verificação de completo
   isCompleted() {
     return state.completed;
   },
-      isModalOpen() {
+
+  forceComplete() {
+    state.completed = true;
+  },
+
+  isModalOpen() {
       return state.modalOpen;
     }
 };

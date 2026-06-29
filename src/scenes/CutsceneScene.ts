@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { dialogos } from '../data/dialogos';
+import type MainMenuUI from '../ui/MainMenuUI';
+import UISoundManager from '../systems/UISoundManager';
 
 export interface CutsceneConfig {
   type: 'image' | 'text';
@@ -51,6 +53,7 @@ export default class CutsceneScene extends Phaser.Scene {
   private typeWriterEvent?: Phaser.Time.TimerEvent;
   private currentFullText = "";
   private currentTypedText = "";
+  private backgroundMusic?: Phaser.Sound.BaseSound;
 
   constructor() {
     super('CutsceneScene');
@@ -88,7 +91,7 @@ export default class CutsceneScene extends Phaser.Scene {
     this.bgImage.setVisible(false);
 
     this.dialogBox = this.add.graphics();
-    this.dialogText = this.add.text(50, height - 140, '', {
+    this.dialogText = this.add.text(50, height - 140, ' ', {
       font: '20px monospace',
       color: '#ffffff',
       wordWrap: { width: width - 100 }
@@ -125,6 +128,15 @@ export default class CutsceneScene extends Phaser.Scene {
     });
 
     this.input.keyboard?.on('keydown-SPACE', () => {
+      // Tocar a música no primeiro input do usuário
+      if (!this.backgroundMusic) {
+          this.backgroundMusic = this.sound.add('intro', { loop: true, volume: 0.2 });
+          this.backgroundMusic.play();
+      }
+      // Não avançar se o menu estiver aberto
+      if (this.mainMenuUI && this.mainMenuUI.isVisibleCheck()) {
+          return;
+      }
       this.advance();
     });
 
@@ -175,9 +187,77 @@ export default class CutsceneScene extends Phaser.Scene {
           this.scene.start(this.nextScene);
         }
       } else {
-        this.renderCurrentScene();
+        // Se formos para a cena 1 (instruções) e o menu não foi exibido ainda, exibe o Menu Principal
+        if (this.currentIndex === 1 && !this.mainMenuUI && !this.isResume) {
+            this.showMainMenu();
+        } else {
+            this.renderCurrentScene();
+        }
       }
     }
+  }
+
+  private mainMenuUI?: MainMenuUI; // vai importar a classe depois, mas o vite lida bem
+
+  private showMainMenu() {
+      // Desabilita input temporariamente
+      if (this.input.keyboard) this.input.keyboard.enabled = false;
+
+      // Adiciona o efeito Pixelate na imagem de fundo (logo)
+      // @ts-expect-error: postFX is not explicitly typed in Phaser Image but exists at runtime
+      const fx = this.bgImage?.postFX?.addPixelate(1);
+
+      if (fx) {
+          // Tween para aumentar o tamanho dos pixels, dando o efeito de "desmontando em pixels"
+          this.tweens.add({
+              targets: fx,
+              amount: 40,
+              duration: 150,
+              ease: 'Power2'
+          });
+      }
+
+      // Fade out da câmera para o preto
+      this.cameras.main.fadeOut(150, 0, 0, 0);
+
+      // Aguarda metade da transição para começar a mostrar o menu principal
+      this.time.delayedCall(75, () => {
+          import('../ui/MainMenuUI').then((module) => {
+              const MainMenuUI = module.default;
+              this.mainMenuUI = new MainMenuUI(this, {
+                  onNewGame: () => {
+                      try {
+                          if (this.mainMenuUI) {
+                              this.mainMenuUI.destroy();
+                              this.mainMenuUI = undefined;
+                          }
+                          if (this.input.keyboard) this.input.keyboard.enabled = true;
+                          
+                          if (this.bgImage && (this.bgImage as any).postFX) {
+                              (this.bgImage as any).postFX.clear();
+                          }
+                          this.cameras.main.setAlpha(1);
+                          this.cameras.main.fadeIn(1000, 0, 0, 0);
+                          
+                          // Force advance to the next state (text sequence)
+                          this.advance();
+                      } catch (err) {
+                          console.error("Error in onNewGame:", err);
+                          // Fallback se algo der errado
+                          this.advance();
+                      }
+                  },
+                  onLoadGame: () => {
+                      console.log("Load Game não implementado ainda.");
+                  },
+                  onSettings: () => {
+                      console.log("Settings não implementado ainda.");
+                  }
+              });
+              this.mainMenuUI.show();
+              if (this.input.keyboard) this.input.keyboard.enabled = true;
+          });
+      });
   }
 
   renderCurrentScene() {
@@ -219,14 +299,24 @@ export default class CutsceneScene extends Phaser.Scene {
 
     if (this.typeWriterEvent) this.typeWriterEvent.remove(false);
 
+    // Configura a voz do personagem atual
+    UISoundManager.setSpeakerFromText(this.currentFullText);
+
     // Efeito de digitação para todas as falas
     let i = 0;
     this.typeWriterEvent = this.time.addEvent({
       delay: current.type === 'text' ? 40 : 25, // texto da intro um pouco mais lento
       repeat: this.currentFullText.length - 1,
       callback: () => {
-        this.currentTypedText += this.currentFullText[i];
+        const char = this.currentFullText[i];
+        this.currentTypedText += char;
         this.dialogText?.setText(this.currentTypedText);
+        
+        // Toca som de digitação apenas em caracteres visíveis
+        if (char !== ' ') {
+            UISoundManager.playTyping();
+        }
+        
         i++;
       }
     });

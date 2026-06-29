@@ -1,3 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '@fontsource/creepster';
+@import '@fontsource/press-start-2p';
+@import '@fontsource/cinzel/700.css'; /* Bold weight */
+@import '@fontsource/cinzel/900.css'; /* Black weight for extra boldness */
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer utilities {
+  @keyframes titleGlow {
+    0%, 100% {
+      text-shadow: 0 8px 20px rgba(0,0,0,1), 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+    50% {
+      text-shadow: 0 8px 20px rgba(0,0,0,1), 0 0 30px rgba(0, 255, 0, 0.4), 0 0 50px rgba(0, 255, 0, 0.15);
+    }
+  }
+
+  .animate-title-glow {
+    animation: titleGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes boxGlow {
+    0%, 100% {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.9), 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+    50% {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.9), 0 0 25px rgba(0, 255, 0, 0.3), 0 0 40px rgba(0, 255, 0, 0.1);
+    }
+  }
+
+  .animate-box-glow {
+    animation: boxGlow 3s ease-in-out infinite;
+  }
+}

@@ -224,7 +224,11 @@ export const RuinsPuzzle = (function () {
     hideModal,
 
     isCompleted() {
-      return state.completed; // agora disponível externamente
+      return state.completed;
+    },
+
+    forceComplete() {
+      state.completed = true;
     },
 
     isModalOpen() {

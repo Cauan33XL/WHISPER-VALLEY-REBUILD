@@ -1,20 +1,20 @@
-# WHISPER VALLEY - REMAKE BY 33XL GAMES SYSTEM
+# WHISPER VALLEY - REBUILD BY 33XL GAMES SYSTEM
 
 <div align="center">
   <img src="public/assets/capas/logo.png" alt="Whisper Valley Logo">
 </div>
 <div align="center">
  
-  ## [Acesse Whisper Valley Remake aqui!🍃](https://whisper-valley-remake.vercel.app/)
+  ## [Acesse Whisper Valley Rebuild aqui!🍃](https://whisper-valley-remake.vercel.app/)
 </div>
 
-**Whisper Valley Remake** é a recriação modernizada e expandida do [**universo original**](https://caio-oliveiraa.github.io/whiper-valley/), um projeto com raízes profundas que não apenas marcou o início de uma importante jornada no desenvolvimento de jogos, mas também serviu de inspiração direta para a criação do meu outro projeto: o vasto universo alternativo (AU) de [**Sycamore Valley**](https://sycamore-valley-game.vercel.app/). Mais do que um simples jogo novo, este remake é um esforço apaixonado de preservação histórica, construído do zero para honrar a essência, a arte e o mistério do jogo Original, ao mesmo tempo em que eleva a experiência técnica para os padrões atuais e um convite para as pessoas conhecerem Sycamore Valley.
+**Whisper Valley Rebuild** é uma reconstrução expandida do [**universo original**](https://caio-oliveiraa.github.io/whiper-valley/) de Whisper Valley, desenvolvida pela 33XL Games System como iniciativa de preservação, modernização e continuidade criativa. Todos os criadores originais permanecem reconhecidos pela obra que serviu como fundamento desta reconstrução. Este projeto com raízes profundas não apenas marcou o início de uma importante jornada no desenvolvimento de jogos, mas também serviu de inspiração direta para a criação do vasto universo alternativo (AU) de [**Sycamore Valley**](https://sycamore-valley-game.vercel.app/). Mais do que um simples jogo novo, este rebuild é um esforço apaixonado construído do zero para honrar a essência, a arte e o mistério do jogo Original, elevando a experiência técnica e servindo como um convite para as pessoas conhecerem Sycamore Valley.
 
 ## 🏫 A Origem: Whisper Valley
 
 Originalmente documentado com o nome completo de **"The Mystery of Whisper Valley"** (embora tenha ficado carinhosamente conhecido apenas como *Whisper Valley*), o projeto nasceu como um trabalho em grupo da graduação de Análise e desenvolvimento de sistemas - UNICEPLAC, Matéria focado em desenvolvimento de games com Javascript. O que começou como uma simples entrega acadêmica acabou se tornando o ponto de partida para uma trajetória inteira no desenvolvimento de jogos e criação de novos universos.
 
-O projeto original de Whisper Valley foi um marco criativo muito importante para mim. Como uma iniciativa de preservação e revitalização, este remake foi criado para manter a obra original viva e acessível. A ideia é refazer o jogo do zero, mantendo a proposta original e utilizando tecnologias web modernas (**TypeScript, Vite e motor Phaser 3**), o que garante estabilidade e fluidez sem perder a essência.
+O projeto original de Whisper Valley foi um marco criativo muito importante para mim. Como uma iniciativa de preservação e revitalização, este rebuild foi criado para manter a obra original viva e acessível. A ideia é refazer o jogo do zero, mantendo a proposta original e utilizando tecnologias web modernas (**TypeScript, Vite e motor Phaser 3**), o que garante estabilidade e fluidez sem perder a essência.
 
 ### 📜 A Lore de Whisper Valley
 
@@ -48,7 +48,7 @@ Apesar da sonoridade dos nomes ser parecida, em *Sycamore Valley* o protagonista
 
 ## 🤝 A Dinâmica do Projeto Original
 
-Para entender este Remake, é fundamental conhecer a dinâmica do jogo original. Eu e o Caio tomamos juntos grande parte das decisões criativas:
+Para entender este Rebuild, é fundamental conhecer a dinâmica do jogo original. Eu e o Caio tomamos juntos grande parte das decisões criativas:
 - **Eu (Cauan)**: Fui o responsável pela criação de todos os Assets de arte e design. Além disso, programei a lógica que permitiu que o *spritesheet* do *player* funcionasse no código original.
 - **Caio**: Foi o responsável por desenvolver 90% do código e estruturação do jogo original de Whisper Valley.
 
@@ -64,8 +64,8 @@ Um agradecimento especial e todos os créditos aos criadores originais do univer
 - **Filipe**
 - **Gabriel**
 
-## ⚙️ Remake e Distribuição
-Remake reescrito, otimizado e distribuído através da minha plataforma: **[33XL GAMES SYSTEM](https://33xl-games-system.vercel.app/)**.
+## ⚙️ Rebuild e Distribuição
+Rebuild reescrito, otimizado e distribuído através da minha plataforma: **[33XL GAMES SYSTEM](https://33xl-games-system.vercel.app/)**.
 
 ---
 
@@ -91,4 +91,5 @@ Certifique-se de ter o [Node.js](https://nodejs.org/) instalado em sua máquina.
    O jogo minificado e otimizado será gerado na pasta `dist/`.
 
 ## 📜 Licença
-Este projeto está sob a Licença MIT. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.
+O jogo original **Whisper Valley** possui a **Licença MIT** (veja os créditos e termos no arquivo [LICENSE-MIT](./LICENSE-MIT)).
+Já este projeto, **Whisper Valley Rebuild**, está sob a **Licença GPL-3.0** (GNU General Public License v3.0), refletindo seu foco como uma versão reconstruída e orientada ao Open Source. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes sobre a licença atual da reconstrução.

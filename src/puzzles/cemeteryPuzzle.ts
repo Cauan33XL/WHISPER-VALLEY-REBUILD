@@ -273,6 +273,7 @@ export const CemeteryPuzzle = (function () {
     showModal,
     hideModal,
     isCompleted: () => STATE.completed,
+    forceComplete: () => { STATE.completed = true; },
     setRect: (r) => { STATE.rect = Object.assign(STATE.rect, r); },
     // utilidade para main: retorna true se jogador está perto
     playerInArea

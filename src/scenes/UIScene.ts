@@ -1,22 +1,21 @@
 import Phaser from 'phaser';
+import PauseMenuUI from '../ui/PauseMenuUI';
+import InventoryUI from '../ui/InventoryUI';
+import SaveSlotUI from '../save/SaveSlotUI';
+import SaveManager from '../save/SaveManager';
 
 export default class UIScene extends Phaser.Scene {
-  private gearButton!: Phaser.GameObjects.Text;
   
-  // Pause Menu
-  private pauseMenuBg!: Phaser.GameObjects.Graphics;
-  private pauseTitle!: Phaser.GameObjects.Text;
-  private resumeBtn!: Phaser.GameObjects.Text;
-  private saveBtn!: Phaser.GameObjects.Text;
-  private configBtn!: Phaser.GameObjects.Text;
-  private exitBtn!: Phaser.GameObjects.Text;
+  // Pause Menu DOM
+  private pauseMenuUI!: PauseMenuUI;
   private isPaused: boolean = false;
 
-  // Inventory
+  // Save / Load
+  private saveSlotUI!: SaveSlotUI;
+
+  // Inventory DOM
   private backpackBtn!: Phaser.GameObjects.Image;
-  private invBg!: Phaser.GameObjects.Graphics;
-  private invTitle!: Phaser.GameObjects.Text;
-  private invItemsContainer!: Phaser.GameObjects.Container;
+  private inventoryUI!: InventoryUI;
   private isInvOpen: boolean = false;
   private itemsData: {nome: string, texture: string}[] = [];
 
@@ -25,20 +24,55 @@ export default class UIScene extends Phaser.Scene {
   private notifText!: Phaser.GameObjects.Text;
   private notifTimer?: Phaser.Time.TimerEvent;
 
+  // Health Bar
+  private healthBarBg!: Phaser.GameObjects.Graphics;
+  private healthBarFill!: Phaser.GameObjects.Graphics;
+  private hpBarW = 180;
+  private hpBarH = 20;
+
   constructor() {
     super({ key: 'UIScene', active: false });
   }
 
   create() {
-    // 1. Botão de Configurações (Engrenagem) no canto superior direito
-    this.gearButton = this.add.text(this.cameras.main.width - 60, 20, '⚙️', { font: '36px Arial', color: '#ffffff' })
-      .setInteractive({ useHandCursor: true })
-      .setScrollFactor(0)
-      .setDepth(100);
-    this.gearButton.on('pointerdown', () => this.togglePauseMenu());
+    // 1. Botão de Configurações (Engrenagem Pixel Art verde) no canto superior direito
+    const gearContainer = this.add.dom(this.cameras.main.width - 50, 50).createFromHTML(`
+      <div id="gear-settings-btn" style="cursor:pointer; width:44px; height:44px; display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 0 6px rgba(34,197,94,0.5)); transition: transform 0.3s ease, filter 0.3s ease;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="6" y="0" width="4" height="2" fill="#22c55e"/>
+          <rect x="6" y="14" width="4" height="2" fill="#22c55e"/>
+          <rect x="0" y="6" width="2" height="4" fill="#22c55e"/>
+          <rect x="14" y="6" width="2" height="4" fill="#22c55e"/>
+          <rect x="2" y="2" width="2" height="2" fill="#22c55e"/>
+          <rect x="12" y="2" width="2" height="2" fill="#22c55e"/>
+          <rect x="2" y="12" width="2" height="2" fill="#22c55e"/>
+          <rect x="12" y="12" width="2" height="2" fill="#22c55e"/>
+          <rect x="4" y="2" width="8" height="2" fill="#16a34a"/>
+          <rect x="4" y="12" width="8" height="2" fill="#16a34a"/>
+          <rect x="2" y="4" width="2" height="8" fill="#16a34a"/>
+          <rect x="12" y="4" width="2" height="8" fill="#16a34a"/>
+          <rect x="4" y="4" width="8" height="8" fill="#15803d"/>
+          <rect x="6" y="6" width="4" height="4" fill="#052e16"/>
+        </svg>
+      </div>
+    `);
+    gearContainer.setScrollFactor(0).setDepth(100);
+
+    const gearEl = gearContainer.getChildByID('gear-settings-btn') as HTMLElement;
+    if (gearEl) {
+      gearEl.addEventListener('mouseenter', () => {
+        gearEl.style.transform = 'rotate(90deg) scale(1.15)';
+        gearEl.style.filter = 'drop-shadow(0 0 12px rgba(34,197,94,0.8))';
+      });
+      gearEl.addEventListener('mouseleave', () => {
+        gearEl.style.transform = 'rotate(0deg) scale(1)';
+        gearEl.style.filter = 'drop-shadow(0 0 6px rgba(34,197,94,0.5))';
+      });
+      gearEl.addEventListener('click', () => this.togglePauseMenu());
+    }
 
     // 2. Botão da Mochila
-    this.backpackBtn = this.add.image(90, 38, 'mochila').setDisplaySize(44, 44)
+    this.backpackBtn = this.add.image(90, 58, 'mochila').setDisplaySize(44, 44)
       .setInteractive({ useHandCursor: true })
       .setScrollFactor(0)
       .setDepth(100);
@@ -46,12 +80,15 @@ export default class UIScene extends Phaser.Scene {
 
     // Escuta tecla ESC para pausar/despausar
     this.input.keyboard?.on('keydown-ESC', () => {
-      // Se inventário estiver aberto, fecha o inventário. Senão, alterna pause.
+      // Se inventário estiver aberto, fecha o inventário
       if (this.isInvOpen) {
         this.toggleInventory();
-      } else {
-        this.togglePauseMenu();
+        return;
       }
+      // Se mini mapa expandido estiver aberto, GameScene já trata o ESC
+      const gs = this.scene.get('GameScene');
+      if ((gs as any).bigMinimapOpen) return;
+      this.togglePauseMenu();
     });
 
     // Escuta evento de coleta de item (pode vir do GameScene)
@@ -63,9 +100,36 @@ export default class UIScene extends Phaser.Scene {
     });
 
     this.createPauseMenu();
+    this.saveSlotUI = new SaveSlotUI(this, {
+      onClose: () => {
+        this.togglePauseMenu();
+      },
+      onSaveCompleted: (slot) => {
+        const gs = this.scene.get('GameScene') as any;
+        const data = gs.getSaveData();
+        SaveManager.save(slot, data);
+        this.showNotification(`Save salvo no Slot ${slot + 1}!`);
+      },
+      onLoadSelected: (_slot, data) => {
+        const gs = this.scene.get('GameScene') as any;
+        gs.applySaveData(data);
+        this.showNotification('Jogo carregado!');
+        this.resumeAfterLoad();
+      },
+    });
     this.createInventoryUI();
     this.createNotificationUI();
-    this.updateInventoryView(); // Initialize empty state
+    this.createHealthBar();
+    this.inventoryUI.updateItems(this.itemsData); // Initialize empty state
+  }
+
+  update() {
+    this.updateHealthBar();
+  }
+
+  private resumeAfterLoad() {
+    this.isPaused = false;
+    this.scene.resume('GameScene');
   }
 
   private togglePauseMenu() {
@@ -74,73 +138,37 @@ export default class UIScene extends Phaser.Scene {
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
       this.scene.pause('GameScene');
-      this.pauseMenuBg.setVisible(true);
-      this.pauseTitle.setVisible(true);
-      this.resumeBtn.setVisible(true);
-      this.saveBtn.setVisible(true);
-      this.configBtn.setVisible(true);
-      this.exitBtn.setVisible(true);
+      this.pauseMenuUI.show();
     } else {
       this.scene.resume('GameScene');
-      this.pauseMenuBg.setVisible(false);
-      this.pauseTitle.setVisible(false);
-      this.resumeBtn.setVisible(false);
-      this.saveBtn.setVisible(false);
-      this.configBtn.setVisible(false);
-      this.exitBtn.setVisible(false);
+      this.pauseMenuUI.hide();
     }
   }
 
   private createPauseMenu() {
-    const cx = this.cameras.main.width;
-    const cy = this.cameras.main.height;
-    
-    this.pauseMenuBg = this.add.graphics();
-    const w = 400;
-    const h = 450;
-    const px = cx/2 - w/2;
-    const py = cy/2 - h/2;
-    
-    // Aesthetic: Verde (#1B4332), Azul (#0B2545), Marrom (#3E2723)
-    this.pauseMenuBg.fillStyle(0x0B2545, 0.95);
-    this.pauseMenuBg.fillRect(px, py, w, h);
-    this.pauseMenuBg.lineStyle(6, 0x1B4332);
-    this.pauseMenuBg.strokeRect(px, py, w, h);
-    
-    this.pauseTitle = this.add.text(cx/2, py + 50, 'PAUSADO', {
-      font: 'bold 36px monospace',
-      color: '#ffffff'
-    }).setOrigin(0.5);
-
-    const btnStyle = { font: '24px monospace', color: '#ffffff', backgroundColor: '#3E2723', padding: { x: 20, y: 10 } };
-    
-    this.resumeBtn = this.add.text(cx/2, py + 150, 'Continuar', btnStyle)
-      .setOrigin(0.5).setInteractive({ useHandCursor: true });
-    this.resumeBtn.on('pointerdown', () => this.togglePauseMenu());
-
-    this.saveBtn = this.add.text(cx/2, py + 230, 'Salvar Jogo', btnStyle)
-      .setOrigin(0.5).setInteractive({ useHandCursor: true });
-    this.saveBtn.on('pointerdown', () => this.showNotification('Função Salvar em breve...'));
-
-    this.configBtn = this.add.text(cx/2, py + 310, 'Configurações', btnStyle)
-      .setOrigin(0.5).setInteractive({ useHandCursor: true });
-    this.configBtn.on('pointerdown', () => this.showNotification('Configurações em breve...'));
-
-    this.exitBtn = this.add.text(cx/2, py + 390, 'Sair do Jogo', btnStyle)
-      .setOrigin(0.5).setInteractive({ useHandCursor: true });
-    this.exitBtn.on('pointerdown', () => {
-      this.togglePauseMenu();
-      this.scene.stop('GameScene');
-      // Redirecionaria pro menu principal, aqui reiniciamos
-      this.scene.start('PreloadScene');
-    });
-
-    this.pauseMenuBg.setVisible(false);
-    this.pauseTitle.setVisible(false);
-    this.resumeBtn.setVisible(false);
-    this.saveBtn.setVisible(false);
-    this.configBtn.setVisible(false);
-    this.exitBtn.setVisible(false);
+      this.pauseMenuUI = new PauseMenuUI(this, this, {
+          onResume: () => {
+              this.togglePauseMenu();
+          },
+          onSettings: () => {
+              this.showNotification('Configurações em breve...');
+          },
+          onSave: () => {
+              this.isPaused = false;
+              this.scene.resume('GameScene');
+              this.saveSlotUI.show('save');
+          },
+          onLoad: () => {
+              this.isPaused = false;
+              this.scene.resume('GameScene');
+              this.saveSlotUI.show('load');
+          },
+          onMainMenu: () => {
+              this.isPaused = false;
+              this.scene.stop('GameScene');
+              this.scene.start('PreloadScene');
+          }
+      });
   }
 
   private toggleInventory() {
@@ -150,88 +178,23 @@ export default class UIScene extends Phaser.Scene {
     
     if (this.isInvOpen) {
       this.scene.pause('GameScene'); // Pausa o jogo ao ver o inventário
-      this.invBg.setVisible(true);
-      this.invTitle.setVisible(true);
-      this.invItemsContainer.setVisible(true);
+      this.inventoryUI.show();
     } else {
       this.scene.resume('GameScene');
-      this.invBg.setVisible(false);
-      this.invTitle.setVisible(false);
-      this.invItemsContainer.setVisible(false);
+      this.inventoryUI.hide();
     }
   }
 
   private createInventoryUI() {
-    const cx = this.cameras.main.width;
-    const cy = this.cameras.main.height;
-    
-    this.invBg = this.add.graphics();
-    const w = 600;
-    const h = 450;
-    const px = cx/2 - w/2;
-    const py = cy/2 - h/2;
-    
-    // Aesthetic: Verde Escuro (#1B4332) e Marrom (#3E2723)
-    this.invBg.fillStyle(0x1B4332, 0.95);
-    this.invBg.fillRect(px, py, w, h);
-    this.invBg.lineStyle(6, 0x3E2723);
-    this.invBg.strokeRect(px, py, w, h);
-    
-    this.invTitle = this.add.text(cx/2, py + 40, 'MOCHILA DE ETHAN', {
-      font: 'bold 30px monospace',
-      color: '#ffffff'
-    }).setOrigin(0.5);
-
-    this.invItemsContainer = this.add.container(px, py);
-
-    this.invBg.setVisible(false);
-    this.invTitle.setVisible(false);
-    this.invItemsContainer.setVisible(false);
+      this.inventoryUI = new InventoryUI(this, this, {
+          onClose: () => {
+              this.toggleInventory();
+          }
+      });
   }
 
   private updateInventoryView() {
-    this.invItemsContainer.removeAll(true);
-    
-    const startX = 60;
-    const startY = 100;
-    const colSpacing = 160;
-    const rowSpacing = 140;
-    const maxCols = 3;
-
-    if (this.itemsData.length === 0) {
-      const emptyText = this.add.text(300, 225, 'A mochila está vazia.', {
-        font: '20px monospace',
-        color: '#aaaaaa'
-      }).setOrigin(0.5);
-      this.invItemsContainer.add(emptyText);
-      return;
-    }
-
-    this.itemsData.forEach((item, index) => {
-      const col = index % maxCols;
-      const row = Math.floor(index / maxCols);
-      const x = startX + col * colSpacing;
-      const y = startY + row * rowSpacing;
-
-      // Slot background
-      const slot = this.add.graphics();
-      slot.fillStyle(0x0B2545, 1);
-      slot.fillRect(x, y, 100, 100);
-      slot.lineStyle(2, 0x3E2723);
-      slot.strokeRect(x, y, 100, 100);
-
-      // Icon
-      const icon = this.add.image(x + 50, y + 40, item.texture).setDisplaySize(64, 64);
-      
-      // Name
-      const name = this.add.text(x + 50, y + 85, item.nome, {
-        font: '14px monospace',
-        color: '#ffffff',
-        align: 'center'
-      }).setOrigin(0.5);
-
-      this.invItemsContainer.add([slot, icon, name]);
-    });
+      this.inventoryUI.updateItems(this.itemsData);
   }
 
   private createNotificationUI() {
@@ -242,6 +205,44 @@ export default class UIScene extends Phaser.Scene {
       font: '20px monospace',
       color: '#ffffff'
     }).setOrigin(0.5).setDepth(3001).setVisible(false);
+  }
+
+  private createHealthBar() {
+    const margin = 10;
+    const bx = margin;
+    const by = this.cameras.main.height - margin - this.hpBarH;
+
+    this.healthBarBg = this.add.graphics();
+    this.healthBarBg.fillStyle(0x333333, 0.8);
+    this.healthBarBg.fillRect(bx, by, this.hpBarW, this.hpBarH);
+    this.healthBarBg.lineStyle(2, 0xffffff, 0.6);
+    this.healthBarBg.strokeRect(bx, by, this.hpBarW, this.hpBarH);
+    this.healthBarBg.setDepth(2000);
+
+    this.healthBarFill = this.add.graphics();
+    this.healthBarFill.setDepth(2001);
+
+    this.add.text(bx + 4, by - 18, 'HP', {
+      font: '14px monospace',
+      color: '#ffffff'
+    }).setDepth(2002);
+  }
+
+  private updateHealthBar() {
+    const gameScene = this.scene.get('GameScene') as any;
+    const player = gameScene?.player;
+    if (!player) return;
+
+    const margin = 10;
+    const bx = margin;
+    const by = this.cameras.main.height - margin - this.hpBarH;
+    const ratio = player.hp / player.maxHp;
+
+    this.healthBarFill.clear();
+
+    const color = ratio > 0.5 ? 0x22c55e : ratio > 0.25 ? 0xeab308 : 0xef4444;
+    this.healthBarFill.fillStyle(color, 1);
+    this.healthBarFill.fillRect(bx + 2, by + 2, (this.hpBarW - 4) * ratio, this.hpBarH - 4);
   }
 
   private showNotification(texto: string) {

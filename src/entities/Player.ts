@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
+  public maxHp = 100;
+  public hp = 100;
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasdKeys: {
     W: Phaser.Input.Keyboard.Key;
@@ -10,6 +12,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   };
   private speed = 400; // Phaser uses pixels per second, 7 * 60FPS ~= 420
   private shadow: Phaser.GameObjects.Ellipse;
+  private footstepSound?: Phaser.Sound.BaseSound;
+
+  takeDamage(amount: number) {
+    this.hp = Math.max(0, this.hp - amount);
+  }
+
+  heal(amount: number) {
+    this.hp = Math.min(this.maxHp, this.hp + amount);
+  }
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 'player');
@@ -32,7 +43,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true);
 
     this.cursors = scene.input.keyboard!.createCursorKeys();
-    this.wasdKeys = scene.input.keyboard!.addKeys('W,A,S,D') as any;
+    this.wasdKeys = scene.input.keyboard!.addKeys('W,A,S,D') as unknown as {
+        W: Phaser.Input.Keyboard.Key;
+        A: Phaser.Input.Keyboard.Key;
+        S: Phaser.Input.Keyboard.Key;
+        D: Phaser.Input.Keyboard.Key;
+    };
+
+    // Inicializa o som de passos
+    this.footstepSound = scene.sound.add('passos', { loop: true, volume: 0.1 });
 
     this.createAnimations(scene);
   }
@@ -99,6 +118,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setFrame(this.anims.currentAnim.frames[0].frame.name);
       } else {
         this.setFrame(0);
+      }
+      
+      if (this.footstepSound?.isPlaying) {
+          this.footstepSound.pause();
+      }
+    } else {
+      if (this.footstepSound?.isPaused) {
+          this.footstepSound.resume();
+      } else if (!this.footstepSound?.isPlaying) {
+          this.footstepSound?.play();
       }
     }
     

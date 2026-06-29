@@ -482,6 +482,10 @@ function handleSymbolClick(btn, index, idxLabel) {
     return completed;
   }
 
+  function forceComplete() {
+    completed = true;
+  }
+
     function isModalOpen() {
     return modalOpen;
   }
@@ -493,6 +497,7 @@ function handleSymbolClick(btn, index, idxLabel) {
     showModal,
     setArea,
     setSymbols,
+    forceComplete,
     // flags e estado útil
     get completed() { return completed; },
     get area() { return area; },
