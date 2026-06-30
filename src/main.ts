@@ -5,6 +5,7 @@ import GameScene from './scenes/GameScene';
 import CutsceneScene from './scenes/CutsceneScene';
 import FinalScene from './scenes/FinalScene';
 import UIScene from './scenes/UIScene';
+import Chapter02IntroScene from './scenes/Chapter02IntroScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -32,7 +33,8 @@ const config: Phaser.Types.Core.GameConfig = {
     CutsceneScene,
     GameScene,
     UIScene,
-    FinalScene
+    FinalScene,
+    Chapter02IntroScene
   ]
 };
 

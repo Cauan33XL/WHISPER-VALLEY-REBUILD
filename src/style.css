@@ -33,4 +33,30 @@
   .animate-box-glow {
     animation: boxGlow 3s ease-in-out infinite;
   }
+
+  @keyframes boxGlowRed {
+    0%, 100% {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.9), 0 0 15px rgba(255, 0, 0, 0.2);
+    }
+    50% {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.9), 0 0 25px rgba(255, 0, 0, 0.3), 0 0 40px rgba(255, 0, 0, 0.1);
+    }
+  }
+
+  .animate-box-glow-red {
+    animation: boxGlowRed 3s ease-in-out infinite;
+  }
+
+  @keyframes boxGlowBrown {
+    0%, 100% {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.9), 0 0 15px rgba(92, 42, 13, 0.2);
+    }
+    50% {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.9), 0 0 25px rgba(92, 42, 13, 0.4), 0 0 40px rgba(92, 42, 13, 0.2);
+    }
+  }
+
+  .animate-box-glow-brown {
+    animation: boxGlowBrown 3s ease-in-out infinite;
+  }
 }

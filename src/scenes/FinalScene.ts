@@ -1,7 +1,12 @@
 import Phaser from 'phaser';
+import UISoundManager from '../systems/UISoundManager';
 
 export default class FinalScene extends Phaser.Scene {
-  private inventoryItens: string[] = [];
+  private inventoryItens: { nome: string, texture: string }[] = [];
+  
+  private typeWriterEvent?: Phaser.Time.TimerEvent;
+  private currentFullText = "";
+  private currentTypedText = "";
   
   private cenasBom = [
     { imagem: "cena-14", falas: ["Ethan: Mas o quê?! Sumiram!", ".", "Ethan: Onde estão...? Os pedestais? As estátuas?", ".", "Ethan: Isto não está certo. De jeito nenhum."] },
@@ -30,7 +35,7 @@ export default class FinalScene extends Phaser.Scene {
     super('FinalScene');
   }
 
-  init(data: { inventory: string[] }) {
+  init(data: { inventory: { nome: string, texture: string }[] }) {
     this.inventoryItens = data.inventory || [];
   }
 
@@ -45,7 +50,7 @@ export default class FinalScene extends Phaser.Scene {
   }
 
   create() {
-    this.isGoodEnding = this.inventoryItens.includes('Relíquia');
+    this.isGoodEnding = this.inventoryItens.some(item => item.nome === 'Relíquia');
     this.currentSequence = this.isGoodEnding ? this.cenasBom : this.cenasRuim;
     this.currentIndex = 0;
     this.currentFalaIndex = 0;
@@ -90,6 +95,13 @@ export default class FinalScene extends Phaser.Scene {
       return;
     }
 
+    if (this.typeWriterEvent && this.currentTypedText.length < this.currentFullText.length) {
+      this.typeWriterEvent.remove(false);
+      this.currentTypedText = this.currentFullText;
+      this.dialogText?.setText(this.currentTypedText);
+      return;
+    }
+
     const current = this.currentSequence[this.currentIndex];
     if (this.currentFalaIndex < current.falas.length - 1) {
       this.currentFalaIndex++;
@@ -125,7 +137,24 @@ export default class FinalScene extends Phaser.Scene {
     this.dialogBox?.strokeRect(margem, height - caixaAltura - margem, width - margem * 2, caixaAltura);
 
     const fala = current.falas[this.currentFalaIndex];
-    this.dialogText?.setText(fala);
+    this.currentFullText = fala;
+    this.currentTypedText = "";
+    
+    if (this.typeWriterEvent) this.typeWriterEvent.remove(false);
+    UISoundManager.setSpeakerFromText(this.currentFullText);
+
+    let i = 0;
+    this.typeWriterEvent = this.time.addEvent({
+      delay: 35,
+      repeat: this.currentFullText.length - 1,
+      callback: () => {
+        const char = this.currentFullText[i];
+        this.currentTypedText += char;
+        this.dialogText?.setText(this.currentTypedText);
+        if (char !== ' ') UISoundManager.playTyping();
+        i++;
+      }
+    });
   }
 
   showFinalScreen() {
@@ -136,16 +165,44 @@ export default class FinalScene extends Phaser.Scene {
     this.bgImage?.setVisible(false);
     this.dialogBox?.clear();
     this.dialogText?.setText('');
-    this.promptText?.setText('Pressione "ESPAÇO" para jogar de novo');
+    this.promptText?.setText('');
 
     if (this.isGoodEnding) {
-      const mensagem = "Depois de retornar, Ethan publica sua matéria, mas ninguém acredita em sua história.\nO mundo a trata como uma obra de ficção.\nPor causa do fracasso da publicação, ele é demitido do jornal e\npermanece como o único vivo que conhece a verdade sobre Whisper Valley.";
+      this.add.text(width / 2, height / 2 - 100, "Continuar para o Capítulo 02?", { font: '32px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+
+      const btnSim = this.add.text(width / 2, height / 2, "[ SIM - O pesadelo não acabou ]", { font: '24px monospace', color: '#22c55e' }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+      const btnNao = this.add.text(width / 2, height / 2 + 60, "[ NÃO - Seguir com uma vida normal ]", { font: '24px monospace', color: '#ef4444' }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+      btnSim.on('pointerdown', () => {
+        this.scene.start('Chapter02IntroScene');
+      });
+
+      btnNao.on('pointerdown', () => {
+        btnSim.destroy();
+        btnNao.destroy();
+        this.children.removeAll(); 
+        
+        const mensagem = "Depois de retornar, Ethan publica sua matéria, mas ninguém acredita em sua história.\nO mundo a trata como uma obra de ficção.\nPor causa do fracasso da publicação, ele abandona o jornalismo e\ntenta seguir uma vida normal, sendo o único vivo que conhece a verdade.";
+        
+        this.add.text(width / 2, height / 2 - 50, mensagem, { font: '20px monospace', color: '#ffffff', align: 'center', wordWrap: { width: width - 100 } }).setOrigin(0.5);
+        this.add.text(width / 2, height / 2 + 80, "Fim do Capítulo 01", { font: '32px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+        
+        const btnMenu = this.add.text(width / 2, height - 60, "[ VOLTAR AO MENU PRINCIPAL ]", { font: '24px monospace', color: '#999999' }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        btnMenu.on('pointerdown', () => {
+           window.location.reload(); 
+        });
+      });
       
-      this.add.text(width / 2, height / 2 - 100, mensagem, { font: '20px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
-      this.add.text(width / 2, height / 2 + 80, "Fim! Você fez o final bom?!", { font: '28px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
     } else {
-      this.add.text(width / 2, height / 2 - 20, "Fim!", { font: '28px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
-      this.add.text(width / 2, height / 2 + 20, "Você fez o final ruim!", { font: '20px monospace', color: '#ffffff', align: 'center' }).setOrigin(0.5);
+      const badMessage = "O final ruim é direto e brutal.\nSem a Relíquia, Ethan se torna mais um nome nas lápides em branco do cemitério.\nA seita vence, Abraxas é alimentado, e a cidade continua seu ciclo eterno.";
+      
+      this.add.text(width / 2, height / 2 - 100, "GAME OVER", { font: '48px monospace', color: '#ef4444', fontStyle: 'bold', align: 'center' }).setOrigin(0.5);
+      this.add.text(width / 2, height / 2 + 20, badMessage, { font: '20px monospace', color: '#ffffff', align: 'center', wordWrap: { width: width - 100 } }).setOrigin(0.5);
+      
+      const btnMenu = this.add.text(width / 2, height - 80, "[ VOLTAR AO MENU PRINCIPAL ]", { font: '24px monospace', color: '#aaaaaa' }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+      btnMenu.on('pointerdown', () => {
+         window.location.reload();
+      });
     }
   }
 }

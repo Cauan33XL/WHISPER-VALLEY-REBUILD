@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 // ruinsPuzzle.js (corrigido)
 export const RuinsPuzzle = (function () {
@@ -32,7 +33,9 @@ export const RuinsPuzzle = (function () {
     }
     try {
       if (typeof inventario !== "undefined" && inventario && Array.isArray(inventario.itens)) return inventario;
-    } catch (e) {}
+    } catch {
+      // ignore
+    }
     return null;
   }
 
@@ -40,7 +43,7 @@ export const RuinsPuzzle = (function () {
     const invent = getGlobalInventario();
     if (!invent || !Array.isArray(invent.itens)) return false;
     const need = ["pedra", "flor", "calice", "pena"];
-    const invNormalized = invent.itens.map(i => normalizeText(i));
+    const invNormalized = invent.itens.map(i => normalizeText(i.nome || i));
     return need.every(n => invNormalized.includes(normalizeText(n)));
   }
 
@@ -214,7 +217,7 @@ export const RuinsPuzzle = (function () {
       }
     },
 
-    playerInArea(player, map) {
+    playerInArea(player) {
       const px = player.x + (player.largura || player.displayWidth || 0) / 2;
       const py = player.y + (player.altura || player.displayHeight || 0) / 2;
       return px >= state.x && px <= state.x + state.w && py >= state.y && py <= state.y + state.h;

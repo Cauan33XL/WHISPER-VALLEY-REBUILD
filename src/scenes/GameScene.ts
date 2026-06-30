@@ -344,6 +344,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Inicializar Inventário e Itens
     this.inventory = new Inventory(this);
+    Object.assign(window, { inventario: this.inventory });
     // Para simplificar, estamos criando texturas placeholder para os itens caso não existam as imagens
     // Os assets eram: 'pedra', 'flor', 'calice', 'pena', 'reliquia'
     this.items.push(new Item(this, 2500, 1250, 'Pedra', 'pedra'));

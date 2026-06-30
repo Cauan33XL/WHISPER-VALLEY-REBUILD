@@ -5,7 +5,7 @@
 </div>
 <div align="center">
  
-  ## [Acesse Whisper Valley Rebuild aqui!🍃](https://whisper-valley-remake.vercel.app/)
+  ## [Acesse Whisper Valley Rebuild aqui!🍃](https://whisper-valley-rebuild.vercel.app/)
 </div>
 
 **Whisper Valley Rebuild** é uma reconstrução expandida do [**universo original**](https://caio-oliveiraa.github.io/whiper-valley/) de Whisper Valley, desenvolvida pela 33XL Games System como iniciativa de preservação, modernização e continuidade criativa. Todos os criadores originais permanecem reconhecidos pela obra que serviu como fundamento desta reconstrução. Este projeto com raízes profundas não apenas marcou o início de uma importante jornada no desenvolvimento de jogos, mas também serviu de inspiração direta para a criação do vasto universo alternativo (AU) de [**Sycamore Valley**](https://sycamore-valley-game.vercel.app/). Mais do que um simples jogo novo, este rebuild é um esforço apaixonado construído do zero para honrar a essência, a arte e o mistério do jogo Original, elevando a experiência técnica e servindo como um convite para as pessoas conhecerem Sycamore Valley.
@@ -45,6 +45,27 @@ Este AU é o maior testamento de como a semente plantada no projeto acadêmico o
 ### 🔴 EVAN BRECHT:
 
 Apesar da sonoridade dos nomes ser parecida, em *Sycamore Valley* o protagonista ganha uma roupagem e um peso narrativo completamente distintos. **Evan Brecht** possui pele levemente parda (nacionalidade latina-germânica), cabelos pretos e olhos azuis. Veste uma marcante jaqueta vermelha com bolinhas pretas nas extremidades das mangas, contendo duas cruzes (uma no coração, outra maior nas costas) e o emblema da A.I.P. no peito direito, sobre uma camisa branca e calça jeans cinza. Ao contrário da melancolia calma de Ethan, Evan é mal-humorado, porém intensamente altruísta e determinado a resolver problemas fora de seu alcance. Coordenado por sua avó (a professora Hilda Brecht), ele investiga o desaparecimento de seu tio mais velho, Amadeus Stein Brecht. Nessa jornada, ele não lida apenas com cultos como a *Lichtkind* (Filhos da Luz), mas bate de frente com realidades metafísicas e entidades surreais.
+
+## 💡 Por que "Rebuild"?
+
+A escolha do termo **Rebuild** (em vez de *Remake*) tem um propósito narrativo e conceitual muito forte. Conforme o desenvolvimento avançou, o escopo de Whisper Valley cresceu além de uma simples recriação, ganhando novos contornos e profundidade. O termo é uma referência direta à quadrilogia de filmes *Rebuild of Evangelion* (Neon Genesis Evangelion), que começa revisitando a obra clássica, mas logo diverge para expandir e reinterpretar seu próprio universo com uma identidade inédita.
+
+Além disso, adotar o formato de Rebuild resolve uma questão fundamental de design narrativo: **Sycamore Valley não é mais um Universo Alternativo (AU) do jogo acadêmico original, mas sim um AU deste Rebuild**. 
+O projeto original tinha uma discrepância muito grande de tom, mecânicas e complexidade quando comparado ao vasto horror metafísico de Sycamore Valley. O Rebuild atua como a ponte perfeita, elevando a base de Whisper Valley ao mesmo nível de maturidade e qualidade técnica, criando assim um multiverso sólido, coeso e livre de discrepâncias abruptas para os jogadores.
+
+## 📖 Estrutura de Expansão: O Formato Episódico
+
+Para expandir o universo sem sobrescrever o encanto original, o jogo base que temos agora serve apenas como a introdução dessa vasta história. Reforçando ainda mais a clara referência à franquia *Evangelion Rebuild*, o jogo será estruturado em um formato episódico composto por **9 capítulos**, com os seguintes títulos:
+
+* **1.0** — Capítulo 01: You Can (Not) Escape *(O Jogo Atual)*
+* **2.0** — Capítulo 02: You Can (Not) Return
+* **3.0** — Capítulo 03: You Can (Not) Forget
+* **3.0 + 1.0** — Capítulo 04: You Can (Not) Ignore
+* **5.0** — Capítulo 05: You Can (Not) Hide
+* **6.0** — Capítulo 06: You Can (Not) Resist
+* **7.0** — Capítulo 07: You Can (Not) Understand
+* **8.0** — Capítulo 08: You Can (Not) Wake Up
+* **9.0** — Capítulo 09: You Can (Not) Leave It Behind
 
 ## 🤝 A Dinâmica do Projeto Original
 
